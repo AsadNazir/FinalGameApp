@@ -4,13 +4,13 @@
     <group android:checkableBehavior="all">
         <item
             android:id="@+id/nav_book"
-            android:title="Book" />
+            android:title="Game" />
         <item
             android:id="@+id/nav_return"
-            android:title="Return" />
+            android:title="Results" />
         <item
             android:id="@+id/nav_laptop"
-            android:title="Surah List" />
+            android:title="Github" />
 
     </group>
 

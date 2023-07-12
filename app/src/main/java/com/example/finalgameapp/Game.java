@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -25,6 +26,11 @@ public class Game extends Fragment {
     private char[] grassLetters = {'g', 'j', 'p', 'q', 'y'};
     private char[] rootLetters = {'a', 'c', 'e', 'i', 'm', 'n', 'o', 'r', 's', 'u', 'v', 'w', 'x', 'z'};
     private String answerString = "";
+    Button skyButton;
+    Button grassButton;
+    Button rootButton;
+    Button resetButton;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -33,6 +39,14 @@ public class Game extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    String userAns;
+    String corrAns;
+    int score = 0;
+    int currTurn = 1;
+    final int turns = 5;
+    String[] Ans;
+    String[] Corr;
+    String[] Ques;
 
     public Game() {
         // Required empty public constructor
@@ -56,6 +70,7 @@ public class Game extends Fragment {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,30 +81,86 @@ public class Game extends Fragment {
         }
     }
 
+    public void resetFragment() {
+
+        // Reset necessary variables and views
+        letterTextView.setText(getRandomLetter());
+        answerTextView.setText("");
+        score = 0;
+        currTurn = 1;
+        // Enable necessary buttons if they were disabled
+        skyButton.setEnabled(true);
+        grassButton.setEnabled(true);
+        rootButton.setEnabled(true);
+
+        // Initialize the arrays for questions, answers, and correct answers
+        Ques = new String[turns];
+        Ans = new String[turns];
+        Corr = new String[turns];
+    }
+
+    public Boolean endGame() {
+        if (currTurn > turns) {
+            letterTextView.setText("Game Over!");
+            answerTextView.setText("Score: " + score);
+            Db DbHandler = new Db(getContext());
+            DbHandler.insertData(Ques, Ans, Corr, score);
+            return true;
+        }
+
+        return false;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        TextView letterTextView, answerTextView;
-
-        // Write view Logic here
-
-        View view =inflater.inflate(R.layout.fragment_game, container, false);
+        View view = inflater.inflate(R.layout.fragment_game, container, false);
 
         letterTextView = view.findViewById(R.id.letter_text_view);
         letterTextView.setText(getRandomLetter());
 
         answerTextView = view.findViewById(R.id.answer_text_view);
 
-        Button skyButton = view.findViewById(R.id.sky_button);
-        skyButton.setOnClickListener(new View.OnClickListener() {
+        skyButton = view.findViewById(R.id.sky_button);
+        grassButton = view.findViewById(R.id.grass_button);
+        rootButton = view.findViewById(R.id.root_button);
+        resetButton = view.findViewById(R.id.resetBtn);
+
+        resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (answerString == "Sky Letter") {
-                    answerTextView.setText("Awesome your answer is right");
+                resetFragment();
+            }
+        });
+
+        resetFragment();
+
+        skyButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                rootButton.setEnabled(false);
+                grassButton.setEnabled(false);
+                skyButton.setEnabled(false);
+
+                if (answerString.equals("Sky Letter")) {
+                    answerTextView.setText("Awesome, your answer is correct!");
+                    score++;
                 } else {
-                    answerTextView.setText("Incorrect! the answer is " + answerString);
+                    answerTextView.setText("Incorrect! The answer is " + answerString);
                 }
+
+                if (endGame()) {
+                    return;
+                }
+
+                // Store the question, answer, and correct answer in the respective arrays
+                Ques[currTurn - 1] = letterTextView.getText().toString();
+                Ans[currTurn - 1] = answerString;
+                Corr[currTurn - 1] = "Sky Letter";
 
                 // Wait for 5 seconds and create a new question
                 new Handler().postDelayed(new Runnable() {
@@ -97,55 +168,103 @@ public class Game extends Fragment {
                     public void run() {
                         letterTextView.setText(getRandomLetter());
                         answerTextView.setText("");
+                        rootButton.setEnabled(true);
+                        grassButton.setEnabled(true);
+                        skyButton.setEnabled(true);
                     }
-                }, 5000); // 5000 milliseconds = 5 seconds
+                }, 3000);
+
+                currTurn++; // Increment the current turn
             }
         });
 
-        Button grassButton = view.findViewById(R.id.grass_button);
         grassButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (answerString == "Grass Letter") {
-                    answerTextView.setText("Awesome your answer is right");
+
+                rootButton.setEnabled(false);
+                grassButton.setEnabled(false);
+                skyButton.setEnabled(false);
+
+                if (answerString.equals("Grass Letter")) {
+                    answerTextView.setText("Awesome, your answer is correct!");
+                    score++;
                 } else {
-                    answerTextView.setText("Incorrect! the answer is " + answerString);
+                    answerTextView.setText("Incorrect! The answer is " + answerString);
                 }
+
+                if (endGame()) {
+                    return;
+                }
+
+                // Store the question, answer, and correct answer in the respective arrays
+                Ques[currTurn - 1] = letterTextView.getText().toString();
+                Ans[currTurn - 1] = answerString;
+                Corr[currTurn - 1] = "Grass Letter";
+
                 // Wait for 5 seconds and create a new question
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         letterTextView.setText(getRandomLetter());
                         answerTextView.setText("");
+                        rootButton.setEnabled(true);
+                        grassButton.setEnabled(true);
+                        skyButton.setEnabled(true);
                     }
-                }, 5000); // 5000 milliseconds = 5 seconds
+                }, 3000);
+
+                currTurn++; // Increment the current turn
             }
         });
 
-        Button rootButton = view.findViewById(R.id.root_button);
         rootButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (answerString == "Root Letter") {
-                    answerTextView.setText("Awesome your answer is right");
+
+                rootButton.setEnabled(false);
+                grassButton.setEnabled(false);
+                skyButton.setEnabled(false);
+
+                if (answerString.equals("Root Letter")) {
+                    answerTextView.setText("Awesome, your answer is correct!");
+                    score++;
                 } else {
-                    answerTextView.setText("Incorrect! the answer is " + answerString);
+                    answerTextView.setText("Incorrect! The answer is " + answerString);
                 }
+
+                if (endGame()) {
+                    return;
+                }
+
+                // Store the question, answer, and correct answer in the respective arrays
+                Ques[currTurn - 1] = letterTextView.getText().toString();
+                Ans[currTurn - 1] = answerString;
+                Corr[currTurn - 1] = "Root Letter";
+
                 // Wait for 5 seconds and create a new question
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         letterTextView.setText(getRandomLetter());
                         answerTextView.setText("");
+
+                        rootButton.setEnabled(true);
+                        grassButton.setEnabled(true);
+                        skyButton.setEnabled(true);
                     }
-                }, 5000); // 5000 milliseconds = 5 seconds
+                }, 3000);
+
+                currTurn++; // Increment the current turn
             }
         });
 
-
-
-
         return view;
+    }
+
+    public void gameRun() {
+        letterTextView.setText(getRandomLetter());
+        answerTextView.setText("");
     }
 
     private String getRandomLetter() {
@@ -168,4 +287,4 @@ public class Game extends Fragment {
         }
         return String.valueOf(letter);
     }
-    }
+}

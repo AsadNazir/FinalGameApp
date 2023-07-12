@@ -6,11 +6,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
@@ -21,7 +24,22 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     ActionBarDrawerToggle toggle;
-
+//    @Override
+//    protected void onResume() {
+//        try {
+//            super.onResume();
+//            // Reset fragment content when the activity resumes
+//            Game fragmentGame = (Game) getSupportFragmentManager().findFragmentById(R.id.MainLinearLayout);
+//            if (fragmentGame != null) {
+//                fragmentGame.resetFragment();
+//            }
+//        }
+//        catch (Exception E)
+//        {
+//            Toast.makeText(this, ""+ E.toString(), Toast.LENGTH_LONG).show();
+//        }
+//
+//    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,9 +59,16 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-
+        Game fragmentGame = new Game();
         //Navigation item click listener
 
+
+        Toast.makeText(getApplicationContext(),"Game is now in session",Toast.LENGTH_LONG).show();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.MainLinearLayout, fragmentGame);
+        transaction.commit();
+        //hideButton();
+        drawerLayout.closeDrawer(GravityCompat.START);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
             @Override
@@ -52,17 +77,26 @@ public class MainActivity extends AppCompatActivity {
                 switch (menuItem.getItemId())
                 {
                     case R.id.nav_book :
+
                         Toast.makeText(getApplicationContext(),"Game is now in session",Toast.LENGTH_LONG).show();
-                        Game fragmentGame = new Game();
-                        FragmentTransaction transaction =getSupportFragmentManager().beginTransaction();
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.MainLinearLayout, fragmentGame);
                         transaction.commit();
+
+                        //hideButton();
                         drawerLayout.closeDrawer(GravityCompat.START);
                         break;
 
                     case R.id.nav_return :
-                        Toast.makeText(getApplicationContext(),"Retur is Clicked",Toast.LENGTH_LONG).show();
-                        //drawerLayout.closeDrawer(GravityCompat.START);
+                        Fragment fragRes= new Results();
+                        Toast.makeText(getApplicationContext(),"Results ",Toast.LENGTH_LONG).show();
+                        FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
+                        transaction2.replace(R.id.MainLinearLayout, fragRes);
+                        transaction2.commit();
+
+                        //hideButton();
+                        drawerLayout.closeDrawer(GravityCompat.START);
+
                         break;
 
                     case R.id.nav_laptop :
@@ -80,5 +114,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
+
     }
+
+
+    // Method to hide the button
+//    private void hideButton() {
+//        Button button = findViewById(R.id.button);
+//        button.setVisibility(View.GONE);
+//    }
+//
+//    // Method to show the button
+//    private void showButton() {
+//        Button button = findViewById(R.id.button);
+//        button.setVisibility(View.VISIBLE);
+//    }
 }
