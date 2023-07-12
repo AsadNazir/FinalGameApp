@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
+
+import java.net.URI;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -99,13 +102,17 @@ public class MainActivity extends AppCompatActivity {
 
                         break;
 
-                    case R.id.nav_laptop :
-                        Toast.makeText(getApplicationContext(),"Laptop intis clicked",Toast.LENGTH_LONG).show();
+                    case R.id.nav_laptop:
+                        Toast.makeText(getApplicationContext(), "Opening Github", Toast.LENGTH_LONG).show();
                         drawerLayout.closeDrawer(GravityCompat.START);
-//                        intent = new Intent(MainActivity.this, SurahActivity.class);
-//                        startActivity(intent);
 
-                        break;
+                        String url = "https://github.com/AsadNazir/FinalGameApp";
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse(url));
+                        startActivity(intent);
+
+
+                    break;
 
 
                 }
